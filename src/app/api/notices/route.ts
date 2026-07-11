@@ -7,107 +7,141 @@ import { sendImportantNoticeEmail } from "@/lib/email";
 // GET: Anyone logged in can view notices.
 // Important notices appear first.
 export async function GET() {
-  const user = await getSessionUser();
+  try {
+    const user = await getSessionUser();
 
-  if (!user) {
-    return NextResponse.json(
-      { error: "Not logged in." },
-      { status: 401 }
-    );
-  }
+    if (!user) {
+      return NextResponse.json(
+        { error: "Not logged in." },
+        { status: 401 }
+      );
+    }
 
-  const notices = await prisma.notice.findMany({
-    include: {
-      createdBy: {
-        select: {
-          name: true,
+    const notices = await prisma.notice.findMany({
+      include: {
+        createdBy: {
+          select: {
+            name: true,
+          },
         },
       },
-    },
-    orderBy: [
-      {
-        important: "desc",
-      },
-      {
-        createdAt: "desc",
-      },
-    ],
-  });
+      orderBy: [
+        {
+          important: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
 
-  return NextResponse.json({
-    notices,
-  });
+    return NextResponse.json({
+      notices,
+    });
+  } catch (error) {
+    console.error("GET /api/notices failed:", error);
+
+    return NextResponse.json(
+      {
+        error: "Failed to load notices.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 // POST: Admin creates a notice.
 // Important notices trigger an email to all residents.
 export async function POST(req: NextRequest) {
-  const user = await getSessionUser();
+  try {
+    const user = await getSessionUser();
 
-  if (!user) {
-    return NextResponse.json(
-      { error: "Not logged in." },
-      { status: 401 }
-    );
-  }
+    if (!user) {
+      return NextResponse.json(
+        { error: "Not logged in." },
+        { status: 401 }
+      );
+    }
 
-  if (user.role !== "ADMIN") {
-    return NextResponse.json(
-      { error: "Only admins can post notices." },
-      { status: 403 }
-    );
-  }
+    if (user.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Only admins can post notices." },
+        { status: 403 }
+      );
+    }
 
-  const {
-    title,
-    body,
-    important,
-  } = await req.json();
+    const { title, body, important } = await req.json();
 
-  if (!title || !body) {
-    return NextResponse.json(
-      {
-        error: "Title and body are required.",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
+    if (!title || !body) {
+      return NextResponse.json(
+        {
+          error: "Title and body are required.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-  const notice = await prisma.notice.create({
-    data: {
-      title,
-      body,
-      important: Boolean(important),
-      createdById: user.id,
-    },
-  });
-
-  if (notice.important) {
-    const residents = await prisma.user.findMany({
-      where: {
-        role: "RESIDENT",
+    const notice = await prisma.notice.create({
+      data: {
+        title,
+        body,
+        important: Boolean(important),
+        createdById: user.id,
       },
     });
 
-    console.log("📢 Important notice posted");
-    console.log("Residents:", residents.length);
+    if (notice.important) {
+      const residents = await prisma.user.findMany({
+        where: {
+          role: "RESIDENT",
+        },
+      });
 
-    try {
-      const result = await sendImportantNoticeEmail(
-        residents,
-        notice
-      );
+      console.log("📢 Important notice posted");
+      console.log("Residents:", residents.length);
 
-      console.log("✅ Notice email result:", result);
-    } catch (error) {
-      console.error("❌ Notice email failed:");
-      console.error(error);
+      try {
+        const result =
+          await sendImportantNoticeEmail(
+            residents,
+            notice
+          );
+
+        console.log(
+          "✅ Notice email result:",
+          result
+        );
+      } catch (emailError) {
+        console.error(
+          "❌ Failed to send notice emails:",
+          emailError
+        );
+      }
     }
-  }
 
-  return NextResponse.json({
-    notice,
-  });
+    return NextResponse.json({
+      success: true,
+      notice,
+    });
+  } catch (error) {
+    console.error("POST /api/notices failed:");
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Internal server error.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

@@ -80,12 +80,13 @@ model Notice {
   id String @id @default(cuid())
 
   title String
-  body  String
+
+  body String @db.Text
 
   important Boolean @default(false)
 
   createdById String
-  createdBy   User @relation("NoticeAuthor", fields: [createdById], references: [id])
+  createdBy User @relation("NoticeAuthor", fields: [createdById], references: [id])
 
   createdAt DateTime @default(now())
 }
