@@ -11,8 +11,6 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 ![License](https://img.shields.io/badge/License-MIT-green) 
 
 
----
-
 # 🌐 Live Demo
 
 <div align="center">
@@ -37,27 +35,26 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 
 > ⚠️ This account is provided for demonstration purposes only.
 
----
+
 
 ## 🏠 Resident User Guide
 
-### New Resident
+**New Resident Workflow**
 
-1. 📝 Register a new account.
-2. 🔑 Log in using your credentials.
-3. 📋 Raise a maintenance complaint.
-4. 📷 Upload an image (optional).
-5. 📌 Track complaint status in real-time.
-6. 📢 View society notices.
-7. 📧 Receive email notifications whenever your complaint status changes.
-8. 🔒 Reset your password anytime using the OTP-based Forgot Password feature.
+- **Step 1:** 📝 Register a new account.
+- **Step 2:** 🔑 Log in using your credentials.
+- **Step 3:** 📋 Raise a maintenance complaint.
+- **Step 4:** 📷 Upload an image (optional).
+- **Step 5:** 📌 Track your complaint status in real-time.
+- **Step 6:** 📢 View society notices and announcements.
+- **Step 7:** 📧 Receive email notifications whenever your complaint status changes.
+- **Step 8:** 🔒 Reset your password anytime using the OTP-based Forgot Password feature.
 
 
 ⭐ If you like this project, don't forget to **star the repository!**
 
 </div>
 
----
 
 
 ## 📖 Overview
