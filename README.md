@@ -27,9 +27,31 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 
 ### 🔗 https://society-maintenance-tracker-3nxxk10ik.vercel.app/
 
-**Explore all major features including:**
+**Explore all major features**
 
-🏢 Resident Portal • 👨‍💼 Admin Dashboard • 📢 Notice Board • 📋 Complaint Management • 📧 Email Notifications • 🔐 JWT Authentication • 🔑 OTP-Based Password Reset
+## 👨‍💼 Demo Admin Account
+
+| Email | Password |
+|-------|----------|
+| `admin@society.com` | `Admin@123` |
+
+> ⚠️ This account is provided for demonstration purposes only.
+
+---
+
+## 🏠 Resident User Guide
+
+### New Resident
+
+1. 📝 Register a new account.
+2. 🔑 Log in using your credentials.
+3. 📋 Raise a maintenance complaint.
+4. 📷 Upload an image (optional).
+5. 📌 Track complaint status in real-time.
+6. 📢 View society notices.
+7. 📧 Receive email notifications whenever your complaint status changes.
+8. 🔒 Reset your password anytime using the OTP-based Forgot Password feature.
+
 
 ⭐ If you like this project, don't forget to **star the repository!**
 
