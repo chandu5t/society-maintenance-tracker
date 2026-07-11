@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/db";
+import { ComplaintStatus, Prisma } from "@prisma/client";
 import { getSessionUser } from "@/lib/auth";
 import { uploadPhoto } from "@/lib/upload";
 import {
@@ -26,15 +27,7 @@ export async function GET(req: NextRequest) {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
 
-  const where: {
-    residentId?: string;
-    category?: string;
-    currentStatus?: string;
-    createdAt?: {
-      gte?: Date;
-      lte?: Date;
-    };
-  } = {};
+  const where: Prisma.ComplaintWhereInput = {};
 
   if (user.role === "RESIDENT") {
     where.residentId = user.id;
@@ -45,7 +38,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (status) {
-    where.currentStatus = status;
+    where.currentStatus = status as ComplaintStatus;
   }
 
   if (from || to) {
