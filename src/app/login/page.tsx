@@ -2,18 +2,17 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    e: FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
     setError("");
@@ -22,6 +21,7 @@ export default function LoginPage() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -38,15 +38,19 @@ export default function LoginPage() {
         return;
       }
 
-      router.push(
+      const destination =
         data.user.role === "ADMIN"
           ? "/admin"
-          : "/resident"
-      );
+          : "/resident";
 
-      router.refresh();
+      // Force a full page reload so the
+      // authentication cookie is available
+      // and the navbar reloads correctly.
+      window.location.href = destination;
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(
+        "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -60,7 +64,8 @@ export default function LoginPage() {
         </h1>
 
         <p className="text-center text-slate-500 mb-6">
-          Sign in to your Society Maintenance Tracker account.
+          Sign in to your Society Maintenance Tracker
+          account.
         </p>
 
         <form
