@@ -33,22 +33,21 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 |-------|----------|
 | `admin@society.com` | `Admin@123` |
 
-> ⚠️ This account is provided for demonstration purposes only.
+> ⚠️ **This account is provided for demonstration purposes only.**
 
 
 
 ## 🏠 Resident User Guide
 
-**New Resident Workflow**
-
-- **Step 1:** 📝 Register a new account.
-- **Step 2:** 🔑 Log in using your credentials.
-- **Step 3:** 📋 Raise a maintenance complaint.
-- **Step 4:** 📷 Upload an image (optional).
-- **Step 5:** 📌 Track your complaint status in real-time.
-- **Step 6:** 📢 View society notices and announcements.
-- **Step 7:** 📧 Receive email notifications whenever your complaint status changes.
-- **Step 8:** 🔒 Reset your password anytime using the OTP-based Forgot Password feature.
+| Step | Description |
+|------|-------------|
+| 📝 **1. Register** | Create a new resident account using the **Register** page. |
+| 🔑 **2. Login** | Sign in using your registered email and password. |
+| 📋 **3. Raise Complaint** | Submit a maintenance complaint with category, description, and an optional photo. |
+| 📌 **4. Track Complaint** | Monitor the complaint status (**Open → In Progress → Resolved**) in real time. |
+| 📢 **5. View Notices** | Stay updated with society announcements and important notices posted by the admin. |
+| 📧 **6. Email Notifications** | Receive automatic email updates whenever your complaint status changes or an important notice is published. |
+| 🔒 **7. Forgot Password** | Securely reset your password anytime using the OTP-based password recovery feature. |
 
 
 ⭐ If you like this project, don't forget to **star the repository!**
