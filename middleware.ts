@@ -17,6 +17,12 @@ export function middleware(request: NextRequest) {
 
   const user = token ? verifyToken(token) : null;
 
+  console.log("========== MIDDLEWARE ==========");
+  console.log("Path:", pathname);
+  console.log("Token exists:", !!token);
+  console.log("Verified user:", user);
+  console.log("===============================");
+
   // Protected Routes
   const isAdminRoute = pathname.startsWith("/admin");
   const isResidentRoute = pathname.startsWith("/resident");
