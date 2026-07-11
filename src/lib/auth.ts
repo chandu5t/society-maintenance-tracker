@@ -47,11 +47,13 @@ export function verifyToken(
 ): SessionUser | null {
   try {
     return jwt.verify(token, JWT_SECRET) as SessionUser;
-  } catch {
+  } catch (err) {
+    console.error("JWT verify failed:");
+    console.error(err);
+    console.error("JWT_SECRET exists:", !!process.env.JWT_SECRET);
     return null;
   }
 }
-
 export async function getSessionUser(): Promise<SessionUser | null> {
   const store = await cookies();
 
