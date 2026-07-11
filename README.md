@@ -11,6 +11,33 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 ![License](https://img.shields.io/badge/License-MIT-green) 
 
 
+---
+
+# 🌐 Live Demo
+
+<div align="center">
+
+### 🚀 Experience the Application Live
+
+<p>
+  <a href="https://society-maintenance-tracker-3nxxk10ik.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🌍%20Live%20Demo-Visit%20Website-2563EB?style=for-the-badge" alt="Live Demo"/>
+  </a>
+</p>
+
+### 🔗 https://society-maintenance-tracker-3nxxk10ik.vercel.app/
+
+**Explore all major features including:**
+
+🏢 Resident Portal • 👨‍💼 Admin Dashboard • 📢 Notice Board • 📋 Complaint Management • 📧 Email Notifications • 🔐 JWT Authentication • 🔑 OTP-Based Password Reset
+
+⭐ If you like this project, don't forget to **star the repository!**
+
+</div>
+
+---
+
+
 ## 📖 Overview
 
 Managing maintenance requests in residential societies is often a manual and time-consuming process.
