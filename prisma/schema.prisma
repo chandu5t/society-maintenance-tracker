@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  RESIDENT
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  flatNumber   String?
+  role         Role     @default(RESIDENT)
+
+  complaints Complaint[]        @relation("ResidentComplaints")
+  history    ComplaintHistory[] @relation("HistoryActor")
+  notices    Notice[]           @relation("NoticeAuthor")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Complaint {
+  id            String            @id @default(cuid())
+
+  category      String
+  description   String
+  photoUrl      String?
+
+  priority      Priority          @default(MEDIUM)
+  currentStatus ComplaintStatus   @default(OPEN)
+
+  resolvedAt DateTime?
+
+  residentId String
+  resident   User @relation("ResidentComplaints", fields: [residentId], references: [id], onDelete: Cascade)
+
+  history ComplaintHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ComplaintHistory {
+  id String @id @default(cuid())
+
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  actorId String
+  actor   User @relation("HistoryActor", fields: [actorId], references: [id])
+
+  status ComplaintStatus
+  note   String?
+
+  createdAt DateTime @default(now())
+}
+
+model Notice {
+  id String @id @default(cuid())
+
+  title String
+  body  String
+
+  important Boolean @default(false)
+
+  createdById String
+  createdBy   User @relation("NoticeAuthor", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key String @id
+
+  value String
+
+  updatedAt DateTime @updatedAt
+}
