@@ -194,7 +194,7 @@ middleware.ts
 Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/society-maintenance-tracker.git
+git clone https://github.com/chandu5t/society-maintenance-tracker.git
 ```
 
 Move into the project
