@@ -283,3 +283,44 @@ export async function sendImportantNoticeEmail(
     })
   );
 }
+
+
+export async function sendPasswordResetOTPEmail(
+  email: string,
+  name: string,
+  otp: string
+) {
+  const html = emailLayout(
+    "Password Reset Request",
+    `
+      <p>Hello <strong>${name}</strong>,</p>
+
+      <p>
+        We received a request to reset your password for your
+        <strong>Society Maintenance Tracker</strong> account.
+      </p>
+
+      <p>Your One-Time Password (OTP) is:</p>
+
+      <div class="badge" style="font-size:24px;letter-spacing:4px;">
+        ${otp}
+      </div>
+
+      <p>
+        This OTP is valid for
+        <strong>10 minutes</strong>.
+      </p>
+
+      <p>
+        If you did not request a password reset,
+        you can safely ignore this email.
+      </p>
+    `
+  );
+
+  return sendEmail({
+    to: email,
+    subject: "Password Reset OTP",
+    html,
+  });
+}
