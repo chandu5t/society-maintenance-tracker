@@ -4,6 +4,9 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import PasswordStrength from "@/components/PasswordStrength";
+import { isStrongPassword } from "@/lib/password";
+
 interface RegisterForm {
   name: string;
   email: string;
@@ -21,6 +24,9 @@ export default function RegisterPage() {
     flatNumber: "",
   });
 
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,12 +40,33 @@ export default function RegisterPage() {
     }));
   }
 
+  const passwordStrong = isStrongPassword(
+    form.password
+  );
+
+  const passwordsMatch =
+    confirmPassword.length > 0 &&
+    form.password === confirmPassword;
+
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
   ) {
     e.preventDefault();
 
     setError("");
+
+    if (!passwordStrong) {
+      setError(
+        "Please choose a stronger password."
+      );
+      return;
+    }
+
+    if (!passwordsMatch) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -54,14 +81,18 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Registration failed.");
+        setError(
+          data.error || "Registration failed."
+        );
         return;
       }
 
       router.push("/resident");
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(
+        "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -75,7 +106,8 @@ export default function RegisterPage() {
         </h1>
 
         <p className="text-center text-slate-500 mb-6">
-          Register as a resident to raise and track maintenance complaints.
+          Register as a resident to raise and track
+          maintenance complaints.
         </p>
 
         <form
@@ -114,7 +146,10 @@ export default function RegisterPage() {
               onChange={(
                 e: ChangeEvent<HTMLInputElement>
               ) =>
-                update("flatNumber", e.target.value)
+                update(
+                  "flatNumber",
+                  e.target.value
+                )
               }
             />
           </div>
@@ -146,16 +181,57 @@ export default function RegisterPage() {
             <input
               className="input"
               type="password"
-              placeholder="Minimum 6 characters"
+              placeholder="Create a strong password"
               required
-              minLength={6}
               value={form.password}
               onChange={(
                 e: ChangeEvent<HTMLInputElement>
               ) =>
-                update("password", e.target.value)
+                update(
+                  "password",
+                  e.target.value
+                )
               }
             />
+
+            <PasswordStrength
+              password={form.password}
+            />
+          </div>
+
+          <div>
+            <label className="label">
+              Confirm Password
+            </label>
+
+            <input
+              className="input"
+              type="password"
+              placeholder="Re-enter your password"
+              required
+              value={confirmPassword}
+              onChange={(
+                e: ChangeEvent<HTMLInputElement>
+              ) =>
+                setConfirmPassword(
+                  e.target.value
+                )
+              }
+            />
+
+            {confirmPassword && (
+              <p
+                className={`mt-2 text-sm ${
+                  passwordsMatch
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {passwordsMatch
+                  ? "✓ Passwords match"
+                  : "✗ Passwords do not match"}
+              </p>
+            )}
           </div>
 
           {error && (
@@ -167,7 +243,11 @@ export default function RegisterPage() {
           <button
             type="submit"
             className="btn w-full"
-            disabled={loading}
+            disabled={
+              loading ||
+              !passwordStrong ||
+              !passwordsMatch
+            }
           >
             {loading
               ? "Creating Account..."
