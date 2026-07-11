@@ -20,6 +20,31 @@ export async function uploadPhoto(file: File): Promise<string> {
       api_secret: process.env.CLOUDINARY_API_SECRET!,
     });
 
+    // ===== DEBUG LOGS =====
+    console.log("========== CLOUDINARY DEBUG ==========");
+    console.log(
+      "Cloud Name:",
+      process.env.CLOUDINARY_CLOUD_NAME
+    );
+    console.log(
+      "API Key:",
+      process.env.CLOUDINARY_API_KEY
+    );
+    console.log(
+      "API Secret length:",
+      process.env.CLOUDINARY_API_SECRET?.length
+    );
+    console.log(
+      "NODE_ENV:",
+      process.env.NODE_ENV
+    );
+    console.log(
+      "Cloudinary configured:",
+      cloudinaryConfigured()
+    );
+    console.log("======================================");
+    // ======================
+
     const result = await new Promise<{
       secure_url: string;
     }>((resolve, reject) => {
@@ -28,10 +53,26 @@ export async function uploadPhoto(file: File): Promise<string> {
           folder: "society-complaints",
         },
         (error, result) => {
-          if (error || !result) {
+          if (error) {
+            console.error(
+              "Cloudinary Upload Error:",
+              error
+            );
             reject(error);
             return;
           }
+
+          if (!result) {
+            reject(
+              new Error("Cloudinary returned no result.")
+            );
+            return;
+          }
+
+          console.log(
+            "Cloudinary Upload Success:",
+            result.secure_url
+          );
 
           resolve({
             secure_url: result.secure_url,
@@ -44,6 +85,10 @@ export async function uploadPhoto(file: File): Promise<string> {
 
     return result.secure_url;
   }
+
+  console.warn(
+    "Cloudinary credentials not found. Using local storage."
+  );
 
   // Local Development Storage
   const uploadsDir = path.join(
@@ -59,7 +104,7 @@ export async function uploadPhoto(file: File): Promise<string> {
   }
 
   const safeName = `${Date.now()}-${file.name.replace(
-    /[^a-zA-Z0-9.\-_]/g,
+    /[^a-zA-Z0-9._-]/g,
     ""
   )}`;
 
