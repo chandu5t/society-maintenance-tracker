@@ -223,8 +223,10 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/resident");
-      router.refresh();
+      // Force a full page reload so the
+      // authentication cookie is available
+      // and the navbar reloads correctly.
+      window.location.href = "/resident";
     } catch {
       setError(
         "Something went wrong. Please try again."

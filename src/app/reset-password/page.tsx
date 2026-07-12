@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import PasswordStrength from "@/components/PasswordStrength";
@@ -27,6 +28,14 @@ function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] =
     useState("");
+
+  const [showPassword, setShowPassword] =
+  useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);  
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -244,18 +253,45 @@ function ResetPasswordForm() {
               New Password
             </label>
 
-            <input
-              type="password"
-              className="input"
-              placeholder="Enter new password"
-              required
-              value={password}
-              onChange={(e) =>
-                setPassword(
-                  e.target.value
-                )
-              }
-            />
+            <div className="relative">
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                className="input pr-12"
+                placeholder="Enter new password"
+                required
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
 
             <PasswordStrength
               password={password}
@@ -334,18 +370,45 @@ function ResetPasswordForm() {
               Confirm Password
             </label>
 
-            <input
-              type="password"
-              className="input"
-              placeholder="Confirm new password"
-              required
-              value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(
-                  e.target.value
-                )
-              }
-            />
+            <div className="relative">
+              <input
+                type={
+                  showConfirmPassword
+                    ? "text"
+                    : "password"
+                }
+                className="input pr-12"
+                placeholder="Confirm new password"
+                required
+                value={confirmPassword}
+                onChange={(e) =>
+                  setConfirmPassword(
+                    e.target.value
+                  )
+                }
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword(
+                    !showConfirmPassword
+                  )
+                }
+                className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showConfirmPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
 
             {confirmPassword && (
               <p

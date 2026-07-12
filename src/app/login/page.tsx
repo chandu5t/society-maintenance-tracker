@@ -2,10 +2,14 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,8 +68,8 @@ export default function LoginPage() {
         </h1>
 
         <p className="text-center text-slate-500 mb-6">
-          Sign in to your Society Maintenance Tracker
-          account.
+          Sign in to your Society Maintenance
+          Tracker account.
         </p>
 
         <form
@@ -94,16 +98,45 @@ export default function LoginPage() {
               Password
             </label>
 
-            <input
-              type="password"
-              className="input"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              required
-            />
+            <div className="relative">
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                className="input pr-12"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Forgot Password */}
