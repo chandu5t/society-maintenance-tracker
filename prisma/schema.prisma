@@ -123,3 +123,20 @@ model PasswordResetOTP {
   @@index([email])
   @@index([otp])
 }
+
+model EmailVerificationOTP {
+  id String @id @default(cuid())
+
+  email String
+
+  otp String
+
+  verified Boolean @default(false)
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([otp])
+}

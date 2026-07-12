@@ -324,3 +324,52 @@ export async function sendPasswordResetOTPEmail(
     html,
   });
 }
+
+export async function sendEmailVerificationOTP(
+  email: string,
+  otp: string
+) {
+  const html = emailLayout(
+    "Verify Your Email Address",
+    `
+      <p>Hello,</p>
+
+      <p>
+        Thank you for registering with
+        <strong>Society Maintenance Tracker</strong>.
+      </p>
+
+      <p>
+        To complete your registration, please verify your
+        email address using the One-Time Password (OTP)
+        below:
+      </p>
+
+      <div
+        class="badge"
+        style="
+          font-size:24px;
+          letter-spacing:4px;
+        "
+      >
+        ${otp}
+      </div>
+
+      <p>
+        This OTP is valid for
+        <strong>10 minutes</strong>.
+      </p>
+
+      <p>
+        If you did not attempt to create an account,
+        you can safely ignore this email.
+      </p>
+    `
+  );
+
+  return sendEmail({
+    to: email,
+    subject: "Verify Your Email Address",
+    html,
+  });
+}

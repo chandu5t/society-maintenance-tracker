@@ -42,6 +42,41 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Email must be verified before registration
+  const verification =
+    await prisma.emailVerificationOTP.findFirst({
+      where: {
+        email,
+        verified: true,
+      },
+    });
+
+  if (!verification) {
+    return NextResponse.json(
+      {
+        error:
+          "Please verify your email before registering.",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  // Verification must still be valid
+  if (verification.expiresAt < new Date()) {
+    return NextResponse.json(
+      {
+        error:
+          "Email verification has expired. Please verify your email again.",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  // Check if account already exists
   const existing = await prisma.user.findUnique({
     where: {
       email,
@@ -70,6 +105,13 @@ export async function POST(req: NextRequest) {
       passwordHash,
       flatNumber,
       role: "RESIDENT",
+    },
+  });
+
+  // Cleanup verification record
+  await prisma.emailVerificationOTP.deleteMany({
+    where: {
+      email,
     },
   });
 

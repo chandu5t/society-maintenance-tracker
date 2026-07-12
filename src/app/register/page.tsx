@@ -1,6 +1,12 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -29,6 +35,26 @@ export default function RegisterPage() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  const [otp, setOtp] = useState("");
+
+  const [otpSent, setOtpSent] = useState(false);
+
+  const [emailVerified, setEmailVerified] =
+    useState(false);
+
+  const [sendingOTP, setSendingOTP] =
+    useState(false);
+
+  const [verifyingOTP, setVerifyingOTP] =
+    useState(false);
+
+  const [resending, setResending] =
+    useState(false);
+
+  const [timer, setTimer] = useState(0);
+
+  const [success, setSuccess] = useState("");
 
   function update<K extends keyof RegisterForm>(
     field: K,
@@ -47,6 +73,116 @@ export default function RegisterPage() {
   const passwordsMatch =
     confirmPassword.length > 0 &&
     form.password === confirmPassword;
+
+  useEffect(() => {
+    if (timer <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]); 
+  
+  async function handleSendOTP() {
+    if (!form.email) {
+      setError("Please enter your email first.");
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+    setSendingOTP(true);
+
+    try {
+      const res = await fetch(
+        "/api/auth/send-register-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            email: form.email,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(
+          data.error ||
+            "Failed to send OTP."
+        );
+        return;
+      }
+
+      setOtpSent(true);
+      setTimer(60);
+
+      setSuccess(
+        "OTP sent to your email."
+      );
+    } catch {
+      setError(
+        "Could not send OTP."
+      );
+    } finally {
+      setSendingOTP(false);
+    }
+  }
+
+  async function handleVerifyOTP() {
+    if (!otp) {
+      setError("Please enter the OTP.");
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+    setVerifyingOTP(true);
+
+    try {
+      const res = await fetch(
+        "/api/auth/verify-register-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            email: form.email,
+            otp,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(
+          data.error ||
+            "OTP verification failed."
+        );
+        return;
+      }
+
+      setEmailVerified(true);
+
+      setSuccess(
+        "✅ Email verified successfully."
+      );
+    } catch {
+      setError(
+        "Could not verify OTP."
+      );
+    } finally {
+      setVerifyingOTP(false);
+    }
+  }
 
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
@@ -159,19 +295,99 @@ export default function RegisterPage() {
               Email Address
             </label>
 
-            <input
-              className="input"
-              type="email"
-              placeholder="Enter your email"
-              required
-              value={form.email}
-              onChange={(
-                e: ChangeEvent<HTMLInputElement>
-              ) =>
-                update("email", e.target.value)
-              }
-            />
+            <div className="flex gap-2">
+              <input
+                className="input flex-1"
+                type="email"
+                placeholder="Enter your email"
+                required
+                readOnly={emailVerified}
+                value={form.email}
+                onChange={(
+                  e: ChangeEvent<HTMLInputElement>
+                ) =>
+                  update("email", e.target.value)
+                }
+              />
+
+              <button
+                type="button"
+                className="btn whitespace-nowrap"
+                disabled={
+                  sendingOTP ||
+                  emailVerified ||
+                  timer > 0
+                }
+                onClick={handleSendOTP}
+              >
+                {sendingOTP
+                  ? "Sending..."
+                  : timer > 0
+                  ? `${timer}s`
+                  : "Send OTP"}
+              </button>
+            </div>
+
+            {emailVerified && (
+              <p className="mt-2 text-green-600 text-sm font-medium">
+                ✅ Email Verified
+              </p>
+            )}
           </div>
+
+
+          {otpSent && !emailVerified && (
+            <div>
+              <label className="label">
+                Verification OTP
+              </label>
+
+              <div className="flex gap-2">
+                <input
+                  className="input flex-1"
+                  placeholder="Enter 6-digit OTP"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value)
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="btn whitespace-nowrap"
+                  onClick={handleVerifyOTP}
+                  disabled={verifyingOTP}
+                >
+                  {verifyingOTP
+                    ? "Verifying..."
+                    : "Verify"}
+                </button>
+              </div>
+
+              <div className="mt-2">
+                {timer > 0 ? (
+                  <p className="text-sm text-slate-500">
+                    Didn't receive the OTP?
+                    {" "}
+                    Resend in {timer}s
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-sm text-blue-600 hover:underline"
+                    disabled={resending}
+                    onClick={handleSendOTP}
+                  >
+                    {resending
+                      ? "Sending..."
+                      : "Resend OTP"}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
 
           <div>
             <label className="label">
@@ -240,11 +456,18 @@ export default function RegisterPage() {
             </p>
           )}
 
+          {success && (
+            <p className="text-sm text-green-600">
+              {success}
+            </p>
+          )}
+
           <button
             type="submit"
             className="btn w-full"
             disabled={
               loading ||
+              !emailVerified ||
               !passwordStrong ||
               !passwordsMatch
             }
