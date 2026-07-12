@@ -18,12 +18,12 @@ A full-stack Society Maintenance Tracker built with **Next.js 16**, **TypeScript
 ### 🚀 Experience the Application Live
 
 <p>
-  <a href="https://society-maintenance-tracker-3nxxk10ik.vercel.app/" target="_blank">
+  <a href="https://society-maintenance-tracker-six.vercel.app/" target="_blank">
     <img src="https://img.shields.io/badge/🌍%20Live%20Demo-Visit%20Website-2563EB?style=for-the-badge" alt="Live Demo"/>
   </a>
 </p>
 
-### 🔗 https://society-maintenance-tracker-3nxxk10ik.vercel.app/
+### 🔗 https://society-maintenance-tracker-six.vercel.app/
 
 **Explore all major features**
 
